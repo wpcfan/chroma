@@ -119,7 +119,6 @@ class OpenAIEmbeddingFunction(EmbeddingFunction):
             embeddings = []
             for text in texts:
                 result = self._client.create(deployment_id=self.deployment_id, input=text)["data"]
-                # TypeError: list indices must be integers or slices, not str
                 json = result[0]["embedding"]
                 embeddings.append(json)
             return embeddings
