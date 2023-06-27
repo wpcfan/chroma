@@ -76,6 +76,10 @@ class OpenAIEmbeddingFunction(EmbeddingFunction):
             api_type (str, optional): The type of the API deployment. This can be
                 used to specify a different deployment, such as 'azure'. If not
                 provided, it will use the default OpenAI deployment.
+            api_version (str, optional): The version of the Azure OpenAI API to use. If not
+                provided, it will use the default OpenAI API.
+            deployment_id (str, optional): The deployment ID for the Azure OpenAI API. If not
+                provided, it will use the default OpenAI API.
 
         """
         try:
@@ -106,7 +110,7 @@ class OpenAIEmbeddingFunction(EmbeddingFunction):
             openai.organization = organization_id
 
         self.deployment_id = deployment_id
-        self._client = openai.Embedding
+        self._client = openai.Embedding 
         self._model_name = model_name
 
     def __call__(self, texts: Documents) -> Embeddings:
@@ -115,11 +119,10 @@ class OpenAIEmbeddingFunction(EmbeddingFunction):
 
         # Call the OpenAI Embedding API
         if self.deployment_id is not None:
-            print(f"Using deployment_id {self.deployment_id}")
+            # Azure deployments require embedding calls to be made one at a time
             embeddings = []
             for text in texts:
                 result = self._client.create(deployment_id=self.deployment_id, input=text)["data"]
-                # TypeError: list indices must be integers or slices, not str
                 json = result[0]["embedding"]
                 embeddings.append(json)
             return embeddings
